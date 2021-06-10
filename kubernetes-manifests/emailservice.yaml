@@ -29,16 +29,16 @@ spec:
       terminationGracePeriodSeconds: 5
       containers:
       - name: server
-        image: beellzrocks/emailservice
+        image: beellzrocks/emailservice # Change the image with your repository image
         #imagePullPolicy: Never
         ports:
         - containerPort: 8080
         env:
         - name: PORT
           value: "8080"
-        - name: PYROSCOPE_SERVER_ADDRESS
+        - name: PYROSCOPE_SERVER_ADDRESS # To change Pyroscope Server Port change the value
           value: "http://pyroscope:4040"
-        - name: PYROSCOPE_APPLICATION_NAME
+        - name: PYROSCOPE_APPLICATION_NAME # Application name shown in the UI
           value: "email.service"  
         # - name: DISABLE_TRACING
         #   value: "1"
@@ -52,8 +52,8 @@ spec:
           periodSeconds: 5
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:8080"]
-        securityContext:
-          capabilities:
+        securityContext: # this is added as pyroscope need it run properly 
+          capabilities: 
             add:
             - SYS_PTRACE  
         resources:

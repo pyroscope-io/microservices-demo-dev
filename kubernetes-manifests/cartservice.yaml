@@ -29,16 +29,16 @@ spec:
       terminationGracePeriodSeconds: 5
       containers:
       - name: server
-        image: beellzrocks/cartservice
+        image: beellzrocks/cartservice # Change the image with your repository image
         #imagePullPolicy: Never
         ports:
         - containerPort: 7070
         env:
         - name: REDIS_ADDR
           value: "redis-cart:6379"
-        - name: PYROSCOPE_APPLICATION_NAME
+        - name: PYROSCOPE_APPLICATION_NAME # Application name shown in the UI
           value: "cart.dotnet.app"
-        - name: PYROSCOPE_SERVER_ADDRESS
+        - name: PYROSCOPE_SERVER_ADDRESS # To change Pyroscope Server Port change the value 
           value: "http://pyroscope:4040/"
         - name: PYROSCOPE_LOG_LEVEL
           value: "debug"
