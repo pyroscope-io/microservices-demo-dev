@@ -31,7 +31,6 @@ spec:
       containers:
         - name: server
           image: beellzrocks/frontend # Change the image with your repository image
-          #imagePullPolicy: Never
           ports:
           - containerPort: 8080
           readinessProbe:

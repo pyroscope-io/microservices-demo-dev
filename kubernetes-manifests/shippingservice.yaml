@@ -29,7 +29,6 @@ spec:
       containers:
       - name: server
         image: beellzrocks/shippingservice # Change the image with your repository image
-        imagePullPolicy: Never
         ports:
         - containerPort: 50051
         env:

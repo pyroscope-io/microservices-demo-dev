@@ -29,7 +29,7 @@ spec:
       containers:
         - name: server
           image: beellzrocks/checkoutservice # Change the image with your repository image
-          #imagePullPolicy: Never
+
           ports:
           - containerPort: 5050
           readinessProbe:

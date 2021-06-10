@@ -30,7 +30,6 @@ spec:
       containers:
       - name: server
         image: beellzrocks/cartservice # Change the image with your repository image
-        #imagePullPolicy: Never
         ports:
         - containerPort: 7070
         env:

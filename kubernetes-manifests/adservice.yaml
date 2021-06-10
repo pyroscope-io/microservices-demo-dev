@@ -30,7 +30,6 @@ spec:
       containers:
       - name: server
         image: gcr.io/google-samples/microservices-demo/adservice:v0.2.3
-        #imagePullPolicy: Never
         ports:
         - containerPort: 9555
         env:

@@ -30,7 +30,6 @@ spec:
       containers:
       - name: server
         image: beellzrocks/productcatalogservice # Change the image with your repository image
-        #imagePullPolicy: Never
         ports:
         - containerPort: 3550
         env:
