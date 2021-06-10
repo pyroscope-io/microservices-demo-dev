@@ -17,7 +17,7 @@ kind: Config
 build:
   artifacts:
   # image tags are relative; to specify an image repo (e.g. GCR), you
-  # must provide a "default repo" using one of the methods described 
+  # must provide a "default repo" using one of the methods described
   # here:
   # https://skaffold.dev/docs/concepts/#image-repository-handling
   - image: emailservice
@@ -35,7 +35,7 @@ build:
   - image: currencyservice
     context: src/currencyservice
   - image: cartservice
-    context: src/cartservice
+    context: src/cartservice/src
   - image: frontend
     context: src/frontend
   - image: loadgenerator
@@ -44,17 +44,13 @@ build:
     context: src/adservice
   tagPolicy:
     gitCommit: {}
+  local:
+    useBuildkit: false
 deploy:
   kubectl:
     manifests:
     - ./kubernetes-manifests/**.yaml
 profiles:
-# "travis-ci" profile is used to build the images without
-# pushing them.
-- name: travis-ci
-  build:
-    local:
-      push: false
 # "gcb" profile allows building and pushing the images
 # on Google Container Builder without requiring docker
 # installed on the developer machine. However, note that

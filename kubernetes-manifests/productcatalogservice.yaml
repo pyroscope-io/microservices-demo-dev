@@ -25,24 +25,35 @@ spec:
       labels:
         app: productcatalogservice
     spec:
+      serviceAccountName: default
       terminationGracePeriodSeconds: 5
       containers:
       - name: server
-        image: productcatalogservice
+        image: beellzrocks/productcatalogservice # Change the image with your repository image
+        #imagePullPolicy: Never
         ports:
         - containerPort: 3550
         env:
         - name: PORT
           value: "3550"
+        - name: APPLICATION_NAME # Application name shown in the UI
+          value: "shipping.service.app"
+        - name: SERVER_ADDRESS # To change Pyroscope Server Port change the value
+          value: "http://pyroscope:4040"                
+        # - name: DISABLE_STATS
+        #   value: "1"
+        # - name: DISABLE_TRACING
+        #   value: "1"
+        # - name: DISABLE_PROFILER
+        #   value: "1"
+        # - name: JAEGER_SERVICE_ADDR
+        #   value: "jaeger-collector:14268"
         readinessProbe:
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:3550"]
         livenessProbe:
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:3550"]
-#        env:
-#          - name: JAEGER_SERVICE_ADDR
-#            value: "jaeger-collector:14268"
         resources:
           requests:
             cpu: 100m

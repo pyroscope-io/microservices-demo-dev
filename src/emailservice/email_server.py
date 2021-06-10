@@ -22,25 +22,23 @@ import time
 import grpc
 from jinja2 import Environment, FileSystemLoader, select_autoescape, TemplateError
 from google.api_core.exceptions import GoogleAPICallError
+from google.auth.exceptions import DefaultCredentialsError
 
 import demo_pb2
 import demo_pb2_grpc
 from grpc_health.v1 import health_pb2
 from grpc_health.v1 import health_pb2_grpc
 
-from opencensus.trace.exporters import stackdriver_exporter
-from opencensus.trace.ext.grpc import server_interceptor
-from opencensus.trace.samplers import always_on
+from opencensus.ext.stackdriver import trace_exporter as stackdriver_exporter
+from opencensus.ext.grpc import server_interceptor
+from opencensus.common.transports.async_ import AsyncTransport
+from opencensus.trace import samplers
 
 # import googleclouddebugger
 import googlecloudprofiler
 
-try:
-    sampler = always_on.AlwaysOnSampler()
-    exporter = stackdriver_exporter.StackdriverExporter()
-    tracer_interceptor = server_interceptor.OpenCensusServerInterceptor(sampler, exporter)
-except:
-    tracer_interceptor = server_interceptor.OpenCensusServerInterceptor()
+from logger import getJSONLogger
+logger = getJSONLogger('emailservice-server')
 
 # try:
 #     googleclouddebugger.enable(
@@ -49,9 +47,6 @@ except:
 #     )
 # except:
 #     pass
-
-from logger import getJSONLogger
-logger = getJSONLogger('emailservice-server')
 
 # Loads confirmation email template from file
 env = Environment(
@@ -64,6 +59,10 @@ class BaseEmailService(demo_pb2_grpc.EmailServiceServicer):
   def Check(self, request, context):
     return health_pb2.HealthCheckResponse(
       status=health_pb2.HealthCheckResponse.SERVING)
+  
+  def Watch(self, request, context):
+    return health_pb2.HealthCheckResponse(
+      status=health_pb2.HealthCheckResponse.UNIMPLEMENTED)
 
 class EmailService(BaseEmailService):
   def __init__(self):
@@ -169,16 +168,33 @@ def initStackdriverProfiling():
         logger.warning("Could not initialize Stackdriver Profiler after retrying, giving up")
   return
 
+
 if __name__ == '__main__':
   logger.info('starting the email service in dummy mode.')
+
+  # Profiler
   try:
-    enable_profiler = os.environ["ENABLE_PROFILER"]
-    if enable_profiler != "1":
+    if "DISABLE_PROFILER" in os.environ:
       raise KeyError()
     else:
+      logger.info("Profiler enabled.")
       initStackdriverProfiling()
   except KeyError:
-      logger.info("Skipping Stackdriver Profiler Python agent initialization. Set environment variable ENABLE_PROFILER=1 to enable.")
+      logger.info("Profiler disabled.")
 
+  # Tracing
+  try:
+    if "DISABLE_TRACING" in os.environ:
+      raise KeyError()
+    else:
+      logger.info("Tracing enabled.")
+      sampler = samplers.AlwaysOnSampler()
+      exporter = stackdriver_exporter.StackdriverExporter(
+        project_id=os.environ.get('GCP_PROJECT_ID'),
+        transport=AsyncTransport)
+      tracer_interceptor = server_interceptor.OpenCensusServerInterceptor(sampler, exporter)
+  except (KeyError, DefaultCredentialsError):
+      logger.info("Tracing disabled.")
+      tracer_interceptor = server_interceptor.OpenCensusServerInterceptor()
 
   start(dummy_mode = True)
