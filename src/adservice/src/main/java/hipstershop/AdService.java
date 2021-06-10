@@ -32,6 +32,7 @@ import io.opencensus.common.Duration;
 import io.opencensus.contrib.grpc.metrics.RpcViews;
 import io.opencensus.exporter.stats.stackdriver.StackdriverStatsConfiguration;
 import io.opencensus.exporter.stats.stackdriver.StackdriverStatsExporter;
+import io.opencensus.exporter.trace.jaeger.JaegerExporterConfiguration;
 import io.opencensus.exporter.trace.jaeger.JaegerTraceExporter;
 import io.opencensus.exporter.trace.stackdriver.StackdriverTraceConfiguration;
 import io.opencensus.exporter.trace.stackdriver.StackdriverTraceExporter;
@@ -54,14 +55,16 @@ public final class AdService {
   private static final Logger logger = LogManager.getLogger(AdService.class);
   private static final Tracer tracer = Tracing.getTracer();
 
+  @SuppressWarnings("FieldCanBeLocal")
   private static int MAX_ADS_TO_SERVE = 2;
+
   private Server server;
   private HealthStatusManager healthMgr;
 
   private static final AdService service = new AdService();
 
   private void start() throws IOException {
-    int port = Integer.parseInt(System.getenv("PORT"));
+    int port = Integer.parseInt(System.getenv().getOrDefault("PORT", "9555"));
     healthMgr = new HealthStatusManager();
 
     server =
@@ -73,15 +76,14 @@ public final class AdService {
     logger.info("Ad Service started, listening on " + port);
     Runtime.getRuntime()
         .addShutdownHook(
-            new Thread() {
-              @Override
-              public void run() {
-                // Use stderr here since the logger may have been reset by its JVM shutdown hook.
-                System.err.println("*** shutting down gRPC ads server since JVM is shutting down");
-                AdService.this.stop();
-                System.err.println("*** server shut down");
-              }
-            });
+            new Thread(
+                () -> {
+                  // Use stderr here since the logger may have been reset by its JVM shutdown hook.
+                  System.err.println(
+                      "*** shutting down gRPC ads server since JVM is shutting down");
+                  AdService.this.stop();
+                  System.err.println("*** server shut down");
+                }));
     healthMgr.setStatus("", ServingStatus.SERVING);
   }
 
@@ -134,7 +136,7 @@ public final class AdService {
         responseObserver.onNext(reply);
         responseObserver.onCompleted();
       } catch (StatusRuntimeException e) {
-        logger.log(Level.WARN, "GetAds Failed", e.getStatus());
+        logger.log(Level.WARN, "GetAds Failed with status {}", e.getStatus());
         responseObserver.onError(e);
       }
     }
@@ -213,21 +215,18 @@ public final class AdService {
         .build();
   }
 
-  private static void initStackdriver() {
-    logger.info("Initialize Stackdriver");
+  private static void initStats() {
+    if (System.getenv("DISABLE_STATS") != null) {
+      logger.info("Stats disabled.");
+      return;
+    }
+    logger.info("Stats enabled");
 
     long sleepTime = 10; /* seconds */
     int maxAttempts = 5;
     boolean statsExporterRegistered = false;
-    boolean traceExporterRegistered = false;
-
     for (int i = 0; i < maxAttempts; i++) {
       try {
-        if (!traceExporterRegistered) {
-          StackdriverTraceExporter.createAndRegister(
-              StackdriverTraceConfiguration.builder().build());
-          traceExporterRegistered = true;
-        }
         if (!statsExporterRegistered) {
           StackdriverStatsExporter.createAndRegister(
               StackdriverStatsConfiguration.builder()
@@ -240,7 +239,7 @@ public final class AdService {
           logger.log(
               Level.WARN,
               "Failed to register Stackdriver Exporter."
-                  + " Tracing and Stats data will not reported to Stackdriver. Error message: "
+                  + " Stats data will not reported to Stackdriver. Error message: "
                   + e.toString());
         } else {
           logger.info("Attempt to register Stackdriver Exporter in " + sleepTime + " seconds ");
@@ -252,15 +251,60 @@ public final class AdService {
         }
       }
     }
-    logger.info("Stackdriver initialization complete.");
+    logger.info("Stats enabled - Stackdriver Exporter initialized.");
   }
+
+  private static void initTracing() {
+    if (System.getenv("DISABLE_TRACING") != null) {
+      logger.info("Tracing disabled.");
+      return;
+    }
+    logger.info("Tracing enabled");
+
+    long sleepTime = 10; /* seconds */
+    int maxAttempts = 5;
+    boolean traceExporterRegistered = false;
+
+    for (int i = 0; i < maxAttempts; i++) {
+      try {
+        if (!traceExporterRegistered) {
+          StackdriverTraceExporter.createAndRegister(
+              StackdriverTraceConfiguration.builder().build());
+          traceExporterRegistered = true;
+        }
+      } catch (Exception e) {
+        if (i == (maxAttempts - 1)) {
+          logger.log(
+              Level.WARN,
+              "Failed to register Stackdriver Exporter."
+                  + " Tracing data will not reported to Stackdriver. Error message: "
+                  + e.toString());
+        } else {
+          logger.info("Attempt to register Stackdriver Exporter in " + sleepTime + " seconds ");
+          try {
+            Thread.sleep(TimeUnit.SECONDS.toMillis(sleepTime));
+          } catch (Exception se) {
+            logger.log(Level.WARN, "Exception while sleeping" + se.toString());
+          }
+        }
+      }
+    }
+    logger.info("Tracing enabled - Stackdriver exporter initialized.");
+  }
+
+
+
 
   private static void initJaeger() {
     String jaegerAddr = System.getenv("JAEGER_SERVICE_ADDR");
     if (jaegerAddr != null && !jaegerAddr.isEmpty()) {
       String jaegerUrl = String.format("http://%s/api/traces", jaegerAddr);
       // Register Jaeger Tracing.
-      JaegerTraceExporter.createAndRegister(jaegerUrl, "adservice");
+      JaegerTraceExporter.createAndRegister(
+          JaegerExporterConfiguration.builder()
+              .setThriftEndpoint(jaegerUrl)
+              .setServiceName("adservice")
+              .build());
       logger.info("Jaeger initialization complete.");
     } else {
       logger.info("Jaeger initialization disabled.");
@@ -270,20 +314,12 @@ public final class AdService {
   /** Main launches the server from the command line. */
   public static void main(String[] args) throws IOException, InterruptedException {
     // Registers all RPC views.
-    /**
-     * [TODO:rghetia] replace registerAllViews with registerAllGrpcViews.
-     * registerAllGrpcViews registers new views using new measures however current grpc version records against
-     * old measures. When new version of grpc (0.19) is release revert back to new. After reverting
-     * back to new the new measure will not provide any tags (like method). This will create
-     * some discrepencies when compared grpc measurements in Go services.
-     */
-    RpcViews.registerAllViews();
+    RpcViews.registerAllGrpcViews();
 
     new Thread(
-            new Runnable() {
-              public void run() {
-                initStackdriver();
-              }
+            () -> {
+              initStats();
+              initTracing();
             })
         .start();
 

@@ -25,15 +25,25 @@ spec:
       labels:
         app: emailservice
     spec:
+      serviceAccountName: default
       terminationGracePeriodSeconds: 5
       containers:
       - name: server
-        image: emailservice
+        image: beellzrocks/emailservice
+        #imagePullPolicy: Never
         ports:
         - containerPort: 8080
         env:
         - name: PORT
           value: "8080"
+        - name: PYROSCOPE_SERVER_ADDRESS
+          value: "http://pyroscope:4040"
+        - name: PYROSCOPE_APPLICATION_NAME
+          value: "email.service"  
+        # - name: DISABLE_TRACING
+        #   value: "1"
+        - name: DISABLE_PROFILER
+          value: "1"
         readinessProbe:
           periodSeconds: 5
           exec:
@@ -42,9 +52,10 @@ spec:
           periodSeconds: 5
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:8080"]
-        env:
-        - name: ENABLE_PROFILER
-          value: "0"
+        securityContext:
+          capabilities:
+            add:
+            - SYS_PTRACE  
         resources:
           requests:
             cpu: 100m

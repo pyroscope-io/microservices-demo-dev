@@ -25,19 +25,27 @@ spec:
       labels:
         app: cartservice
     spec:
+      serviceAccountName: default
       terminationGracePeriodSeconds: 5
       containers:
       - name: server
-        image: cartservice
+        image: beellzrocks/cartservice
+        #imagePullPolicy: Never
         ports:
         - containerPort: 7070
         env:
         - name: REDIS_ADDR
           value: "redis-cart:6379"
-        - name: PORT
-          value: "7070"
-        - name: LISTEN_ADDR
-          value: "0.0.0.0"
+        - name: PYROSCOPE_APPLICATION_NAME
+          value: "cart.dotnet.app"
+        - name: PYROSCOPE_SERVER_ADDRESS
+          value: "http://pyroscope:4040/"
+        - name: PYROSCOPE_LOG_LEVEL
+          value: "debug"
+        securityContext: # this is added as pyroscope need it run properly 
+          capabilities:
+            add:
+            - SYS_PTRACE            
         resources:
           requests:
             cpu: 200m
@@ -48,12 +56,12 @@ spec:
         readinessProbe:
           initialDelaySeconds: 15
           exec:
-            command: ["/bin/grpc_health_probe", "-addr=:7070"]
+            command: ["/bin/grpc_health_probe", "-addr=:7070", "-rpc-timeout=5s"]
         livenessProbe:
           initialDelaySeconds: 15
           periodSeconds: 10
           exec:
-            command: ["/bin/grpc_health_probe", "-addr=:7070"]
+            command: ["/bin/grpc_health_probe", "-addr=:7070", "-rpc-timeout=5s"]
 ---
 apiVersion: v1
 kind: Service
