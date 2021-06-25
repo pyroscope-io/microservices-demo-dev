@@ -33,7 +33,7 @@ spec:
       terminationGracePeriodSeconds: 5
       containers:
       - name: server
-        image: beellzrocks/emailservice # Change the image with your repository image
+        image: public.ecr.aws/a3t6y9l7/emailservice # Change the image with your repository image
         ports:
         - containerPort: 8080
         env:
@@ -44,7 +44,7 @@ spec:
         - name: PYROSCOPE_SERVER_ADDRESS # To change Pyroscope Server Port change the value
           value: "http://pyroscope:4040"
         - name: PYROSCOPE_APPLICATION_NAME # Application name shown in the UI
-          value: "email.service"        
+          value: "email.service"
         - name: DISABLE_PROFILER
           value: "1"
         readinessProbe:
@@ -58,7 +58,7 @@ spec:
         securityContext:
           capabilities:
             add:
-            - SYS_PTRACE              
+            - SYS_PTRACE
         resources:
           requests:
             cpu: 100m
@@ -96,7 +96,7 @@ spec:
       serviceAccountName: default
       containers:
         - name: server
-          image: beellzrocks/checkoutservice # Change the image with your repository image
+          image: public.ecr.aws/a3t6y9l7/checkoutservice # Change the image with your repository image
           ports:
           - containerPort: 5050
           readinessProbe:
@@ -123,7 +123,7 @@ spec:
           - name: APPLICATION_NAME # Application name shown in the UI
             value: "checkoutservice.app"
           - name: SERVER_ADDRESS # To change Pyroscope Server Port change the value
-            value: "http://pyroscope:4040"  
+            value: "http://pyroscope:4040"
           # - name: DISABLE_STATS
           #   value: "1"
           # - name: DISABLE_TRACING
@@ -170,7 +170,7 @@ spec:
       terminationGracePeriodSeconds: 5
       containers:
       - name: server
-        image: beellzrocks/recommendationservice # Change the image with your repository image
+        image: public.ecr.aws/a3t6y9l7/recommendationservice # Change the image with your repository image
        # imagePullPolicy: Never
         ports:
         - containerPort: 8080
@@ -202,7 +202,7 @@ spec:
         securityContext:
           capabilities:
             add:
-            - SYS_PTRACE  
+            - SYS_PTRACE
         resources:
           requests:
             cpu: 100m
@@ -242,7 +242,7 @@ spec:
       serviceAccountName: default
       containers:
         - name: server
-          image: beellzrocks/frontend # Change the image with your repository image
+          image: public.ecr.aws/a3t6y9l7/frontend # Change the image with your repository image
           #imagePullPolicy: Never
           ports:
           - containerPort: 8080
@@ -282,10 +282,10 @@ spec:
           - name: APPLICATION_NAME # Application name shown in the UI
             value: "frontend.app"
           - name: SERVER_ADDRESS # To change Pyroscope Server Port change the value
-            value: "http://pyroscope:4040"  
+            value: "http://pyroscope:4040"
           # # ENV_PLATFORM: One of: local, gcp, aws, azure, onprem
-          # # When not set, defaults to "local" unless running in GKE, otherwies auto-sets to gcp 
-          # - name: ENV_PLATFORM 
+          # # When not set, defaults to "local" unless running in GKE, otherwies auto-sets to gcp
+          # - name: ENV_PLATFORM
           #   value: "aws"
           # - name: DISABLE_TRACING
           #   value: "1"
@@ -394,7 +394,7 @@ spec:
       terminationGracePeriodSeconds: 5
       containers:
       - name: server
-        image: beellzrocks/productcatalogservice # Change the image with your repository image
+        image: public.ecr.aws/a3t6y9l7/productcatalogservice # Change the image with your repository image
         ports:
         - containerPort: 3550
         env:
@@ -403,8 +403,8 @@ spec:
         - name: APPLICATION_NAME # Application name shown in the UI
           value: "productcatalogservice.app"
         - name: SERVER_ADDRESS # To change Pyroscope Server Port change the value
-          value: "http://pyroscope:4040"  
-  
+          value: "http://pyroscope:4040"
+
         # - name: DISABLE_STATS
         #   value: "1"
         # - name: DISABLE_TRACING
@@ -457,7 +457,7 @@ spec:
       terminationGracePeriodSeconds: 5
       containers:
       - name: server
-        image: beellzrocks/cartservice # Change the image with your repository image
+        image: public.ecr.aws/a3t6y9l7/cartservice # Change the image with your repository image
         #imagePullPolicy: Never
         ports:
         - containerPort: 7070
@@ -473,7 +473,7 @@ spec:
         securityContext:
           capabilities:
             add:
-            - SYS_PTRACE          
+            - SYS_PTRACE
         resources:
           requests:
             cpu: 200m
@@ -612,7 +612,7 @@ spec:
       serviceAccountName: default
       containers:
       - name: server
-        image: beellzrocks/shippingservice # Change the image with your repository image
+        image: public.ecr.aws/a3t6y9l7/shippingservice # Change the image with your repository image
         #imagePullPolicy: Never
         ports:
         - containerPort: 50051
@@ -622,7 +622,7 @@ spec:
         - name: APPLICATION_NAME # Application name shown in the UI
           value: "shipping.service.app"
         - name: SERVER_ADDRESS # To change Pyroscope Server Port change the value
-          value: "http://pyroscope:4040" 
+          value: "http://pyroscope:4040"
         # - name: DISABLE_STATS
         #   value: "1"
         # - name: DISABLE_TRACING
@@ -740,7 +740,7 @@ spec:
         # - name: DISABLE_TRACING
         #   value: "1"
         # - name: JAEGER_SERVICE_ADDR
-        #   value: "jaeger-collector:14268"        
+        #   value: "jaeger-collector:14268"
         resources:
           requests:
             cpu: 200m

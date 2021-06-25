@@ -30,7 +30,7 @@ spec:
       serviceAccountName: default
       containers:
         - name: server
-          image: beellzrocks/frontend # Change the image with your repository image
+          image: public.ecr.aws/a3t6y9l7/frontend # Change the image with your repository image
           ports:
           - containerPort: 8080
           readinessProbe:
@@ -69,10 +69,10 @@ spec:
           - name: APPLICATION_NAME # Application name shown in the UI
             value: "frontend.app"
           - name: SERVER_ADDRESS # To change Pyroscope Server Port change the value
-            value: "http://pyroscope:4040" 
+            value: "http://pyroscope:4040"
           # # ENV_PLATFORM: One of: local, gcp, aws, azure, onprem
-          # # When not set, defaults to "local" unless running in GKE, otherwies auto-sets to gcp 
-          # - name: ENV_PLATFORM 
+          # # When not set, defaults to "local" unless running in GKE, otherwies auto-sets to gcp
+          # - name: ENV_PLATFORM
           #   value: "aws"
           # - name: DISABLE_TRACING
           #   value: "1"

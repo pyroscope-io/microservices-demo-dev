@@ -29,7 +29,7 @@ spec:
       terminationGracePeriodSeconds: 5
       containers:
       - name: server
-        image: beellzrocks/productcatalogservice # Change the image with your repository image
+        image: public.ecr.aws/a3t6y9l7/productcatalogservice # Change the image with your repository image
         ports:
         - containerPort: 3550
         env:
@@ -38,7 +38,7 @@ spec:
         - name: APPLICATION_NAME # Application name shown in the UI
           value: "shipping.service.app"
         - name: SERVER_ADDRESS # To change Pyroscope Server Port change the value
-          value: "http://pyroscope:4040"                
+          value: "http://pyroscope:4040"
         # - name: DISABLE_STATS
         #   value: "1"
         # - name: DISABLE_TRACING

@@ -29,7 +29,7 @@ spec:
       terminationGracePeriodSeconds: 5
       containers:
       - name: server
-        image: beellzrocks/recommendationservice # Change the image with your repository image
+        image: public.ecr.aws/a3t6y9l7/recommendationservice # Change the image with your repository image
         ports:
         - containerPort: 8080
         readinessProbe:
@@ -57,10 +57,10 @@ spec:
           value: "1"
         - name: DISABLE_DEBUGGER
           value: "1"
-        securityContext:   # this is added as pyroscope need it run properly 
+        securityContext:   # this is added as pyroscope need it run properly
           capabilities:
             add:
-            - SYS_PTRACE          
+            - SYS_PTRACE
         resources:
           requests:
             cpu: 100m
