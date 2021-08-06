@@ -60,6 +60,16 @@ spec:
           #   value: "1"
           # - name: JAEGER_SERVICE_ADDR
           #   value: "jaeger-collector:14268"
+
+          # BEGIN PYROSCOPE MODIFICATION
+          - name: PYROSCOPE_APPLICATION_NAME
+            value: "cart.dotnet.app"
+          - name: PYROSCOPE_SERVER_ADDRESS
+            value: "http://pyroscope:4040/"
+          - name: PYROSCOPE_LOG_LEVEL
+            value: "debug"
+          # END PYROSCOPE MODIFICATION
+
           resources:
             requests:
               cpu: 100m

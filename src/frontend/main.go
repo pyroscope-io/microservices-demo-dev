@@ -33,6 +33,8 @@ import (
 	"go.opencensus.io/stats/view"
 	"go.opencensus.io/trace"
 	"google.golang.org/grpc"
+
+	pyroscope "github.com/pyroscope-io/pyroscope/pkg/agent/profiler"
 )
 
 const (
@@ -81,6 +83,12 @@ type frontendServer struct {
 }
 
 func main() {
+
+	pyroscope.Start(pyroscope.Config{
+		ApplicationName: os.Getenv("APPLICATION_NAME"),
+		ServerAddress:   os.Getenv("SERVER_ADDRESS"),
+	})
+
 	ctx := context.Background()
 	log := logrus.New()
 	log.Level = logrus.DebugLevel

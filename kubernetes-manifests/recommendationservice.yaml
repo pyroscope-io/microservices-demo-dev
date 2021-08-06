@@ -51,6 +51,22 @@ spec:
         #   value: "1"
         # - name: DISABLE_DEBUGGER
         #   value: "1"
+
+        # BEGIN PYROSCOPE MODIFICATION
+        - name: PYROSCOPE_APPLICATION_NAME
+          value: "cart.dotnet.app"
+        - name: PYROSCOPE_SERVER_ADDRESS
+          value: "http://pyroscope:4040/"
+        - name: PYROSCOPE_LOG_LEVEL
+          value: "debug"
+
+        # this is added as pyroscope need it run properly (python)
+        securityContext:
+          capabilities:
+            add:
+            - SYS_PTRACE
+        # END PYROSCOPE MODIFICATION
+
         resources:
           requests:
             cpu: 100m

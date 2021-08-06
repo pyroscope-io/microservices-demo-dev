@@ -48,5 +48,10 @@ COPY --from=builder /usr/local/lib/python3.7/ /usr/local/lib/python3.7/
 # Add the application
 COPY . .
 
+# BEGIN PYROSCOPE MODIFICATION
+# copy pyroscope binary from pyroscope image to your image
+COPY --from=pyroscope/pyroscope:latest /usr/bin/pyroscope /usr/bin/pyroscope
+# END PYROSCOPE MODIFICATION
+
 EXPOSE 8080
 ENTRYPOINT [ "python", "email_server.py" ]

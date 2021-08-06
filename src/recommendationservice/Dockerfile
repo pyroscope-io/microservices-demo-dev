@@ -36,4 +36,9 @@ COPY . .
 ENV PORT "8080"
 EXPOSE 8080
 
+# BEGIN PYROSCOPE MODIFICATION
+# copy pyroscope binary from pyroscope image to your image
+COPY --from=pyroscope/pyroscope:latest /usr/bin/pyroscope /usr/bin/pyroscope
+# END PYROSCOPE MODIFICATION
+
 ENTRYPOINT ["python", "/recommendationservice/recommendation_server.py"]

@@ -35,6 +35,8 @@ import (
 
 	pb "github.com/GoogleCloudPlatform/microservices-demo/src/shippingservice/genproto"
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
+
+	pyroscope "github.com/pyroscope-io/pyroscope/pkg/agent/profiler"
 )
 
 const (
@@ -58,6 +60,12 @@ func init() {
 }
 
 func main() {
+
+	pyroscope.Start(pyroscope.Config{
+		ApplicationName: os.Getenv("APPLICATION_NAME"),
+		ServerAddress:   os.Getenv("SERVER_ADDRESS"),
+	})
+
 	if os.Getenv("DISABLE_TRACING") == "" {
 		log.Info("Tracing enabled.")
 		go initTracing()

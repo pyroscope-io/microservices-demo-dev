@@ -43,6 +43,8 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+
+	pyroscope "github.com/pyroscope-io/pyroscope/pkg/agent/profiler"
 )
 
 var (
@@ -75,6 +77,12 @@ func init() {
 }
 
 func main() {
+
+	pyroscope.Start(pyroscope.Config{
+		ApplicationName: os.Getenv("APPLICATION_NAME"),
+		ServerAddress:   os.Getenv("SERVER_ADDRESS"),
+	})
+
 	if os.Getenv("DISABLE_TRACING") == "" {
 		log.Info("Tracing enabled.")
 		go initTracing()
