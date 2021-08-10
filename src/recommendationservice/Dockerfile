@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+ARG PYROSCOPE_VERSION=latest
+
 FROM python:3.7-slim
 RUN apt-get update -qqy && \
 	apt-get -qqy install wget g++ && \
@@ -37,7 +39,5 @@ ENV PORT "8080"
 EXPOSE 8080
 
 # this copies pyroscope binary from pyroscope image to your image:
-COPY --from=pyroscope/pyroscope:latest /usr/bin/pyroscope /usr/bin/pyroscope
+COPY --from=pyroscope/pyroscope:${PYROSCOPE_VERSION} /usr/bin/pyroscope /usr/bin/pyroscope
 ENTRYPOINT ["pyroscope", "exec", "python", "/recommendationservice/recommendation_server.py"]
-
-

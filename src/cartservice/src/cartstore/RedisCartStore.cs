@@ -173,6 +173,11 @@ namespace cartservice.cartstore
 
             try
             {
+                if (DateTime.Now.Hour%2 > 0) {
+                    var j = 0;
+                    for (var i = 0; i < 100000; i++) j++;
+                }
+
                 EnsureRedisConnected();
 
                 var db = redis.GetDatabase();

@@ -15,62 +15,61 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: cartservice
+  name: adservice
 spec:
   selector:
     matchLabels:
-      app: cartservice
+      app: adservice
   template:
     metadata:
       labels:
-        app: cartservice
+        app: adservice
     spec:
       serviceAccountName: default
       terminationGracePeriodSeconds: 5
       containers:
       - name: server
-        image: beellzrocks/cartservice # Change the image with your repository image
+        image: gcr.io/google-samples/microservices-demo/adservice:v0.2.3
         ports:
-        - containerPort: 7070
+        - containerPort: 9555
         env:
-        - name: REDIS_ADDR
-          value: "redis-cart:6379"
-        - name: PYROSCOPE_APPLICATION_NAME # Application name shown in the UI
-          value: "cart.dotnet.app"
-        - name: PYROSCOPE_SERVER_ADDRESS # To change Pyroscope Server Port change the value 
-          value: "http://pyroscope:4040/"
-        - name: PYROSCOPE_LOG_LEVEL
-          value: "debug"
-        securityContext: # this is added as pyroscope need it run properly 
-          capabilities:
-            add:
-            - SYS_PTRACE            
+        - name: PORT
+          value: "9555"
+        - name: DISABLE_STATS
+          value: "1"
+        - name: DISABLE_TRACING
+          value: "1"
+        - name: JAEGER_SERVICE_ADDR
+          value: "jaeger-collector:14268"
         resources:
           requests:
             cpu: 200m
-            memory: 64Mi
+            memory: 180Mi
           limits:
             cpu: 300m
-            memory: 128Mi
+            memory: 300Mi
         readinessProbe:
-          initialDelaySeconds: 15
+          initialDelaySeconds: 20
+          periodSeconds: 15
           exec:
-            command: ["/bin/grpc_health_probe", "-addr=:7070", "-rpc-timeout=5s"]
+            command: ["/bin/grpc_health_probe", "-addr=:9555"]
         livenessProbe:
-          initialDelaySeconds: 15
-          periodSeconds: 10
+          initialDelaySeconds: 20
+          periodSeconds: 15
           exec:
-            command: ["/bin/grpc_health_probe", "-addr=:7070", "-rpc-timeout=5s"]
+            command: ["/bin/grpc_health_probe", "-addr=:9555"]
+
 ---
+
 apiVersion: v1
 kind: Service
 metadata:
-  name: cartservice
+  name: adservice
 spec:
   type: ClusterIP
   selector:
-    app: cartservice
+    app: adservice
   ports:
   - name: grpc
-    port: 7070
-    targetPort: 7070
+    port: 9555
+    targetPort: 9555
