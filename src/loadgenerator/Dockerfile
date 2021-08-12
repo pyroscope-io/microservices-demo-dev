@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-ARG PYROSCOPE_VERSION=latest
-
 FROM python:3.8-slim as base
 
 FROM base as builder
@@ -35,11 +33,4 @@ RUN apt-get -qq update \
     && apt-get install -y --no-install-recommends \
         curl
 
-# this copies pyroscope binary from pyroscope image to your image:
-COPY --from=pyroscope/pyroscope:${PYROSCOPE_VERSION} /usr/bin/pyroscope /usr/bin/pyroscope
-
-# this sets the pyroscope server address as well as the app name, make sure you change these:
-ENV PYROSCOPE_SERVER_ADDRESS=http://pyroscope:4040
-ENV PYROSCOPE_APPLICATION_NAME=loadgen.app
-
-ENTRYPOINT ["pyroscope", "exec", "-spy-name", "pyspy", "./loadgen.sh"]
+ENTRYPOINT ["./loadgen.sh"]

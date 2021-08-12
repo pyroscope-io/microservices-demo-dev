@@ -33,9 +33,9 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	pyroscope "github.com/pyroscope-io/pyroscope/pkg/agent/profiler"
 	pb "github.com/GoogleCloudPlatform/microservices-demo/src/checkoutservice/genproto"
 	money "github.com/GoogleCloudPlatform/microservices-demo/src/checkoutservice/money"
+	pyroscope "github.com/pyroscope-io/pyroscope/pkg/agent/profiler"
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 )
 
@@ -72,10 +72,9 @@ type checkoutService struct {
 func main() {
 
 	pyroscope.Start(pyroscope.Config{
-		ApplicationName: os.Getenv("APPLICATION_NAME"),
-		ServerAddress:   os.Getenv("SERVER_ADDRESS"),
+		ApplicationName: os.Getenv("PYROSCOPE_APPLICATION_NAME"),
+		ServerAddress:   os.Getenv("PYROSCOPE_SERVER_ADDRESS"),
 	})
-
 
 	if os.Getenv("DISABLE_TRACING") == "" {
 		log.Info("Tracing enabled.")

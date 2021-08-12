@@ -1,0 +1,58 @@
+images:
+  registry: pyroscope
+  tag: 0.0.1
+
+pyroscopeServer:
+  address: http://pyroscope:4040
+
+loadGenerator:
+  users: 50
+
+cartService:
+  pyroscope:
+    appName: cart.service.dotnet
+  image:
+    registry:
+    tag:
+
+checkoutService:
+  pyroscope:
+    appName: checkout.service.go
+  image:
+    registry:
+    tag:
+
+emailService:
+  pyroscope:
+    appName: email.service.python
+  image:
+    registry:
+    tag:
+
+frontend:
+  pyroscope:
+    appName: frontend.go
+  image:
+    registry:
+    tag:
+
+productCatalogService:
+  pyroscope:
+    appName: catalog.service.go
+  image:
+    registry:
+    tag:
+
+recommendationService:
+  pyroscope:
+    appName: recommendation.service.python
+  image:
+    registry:
+    tag:
+
+shippingService:
+  pyroscope:
+    appName: shipping.service.go
+  image:
+    registry:
+    tag:

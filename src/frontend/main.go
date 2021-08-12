@@ -26,6 +26,7 @@ import (
 	"contrib.go.opencensus.io/exporter/stackdriver"
 	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
+	pyroscope "github.com/pyroscope-io/pyroscope/pkg/agent/profiler"
 	"github.com/sirupsen/logrus"
 	"go.opencensus.io/plugin/ocgrpc"
 	"go.opencensus.io/plugin/ochttp"
@@ -33,7 +34,6 @@ import (
 	"go.opencensus.io/stats/view"
 	"go.opencensus.io/trace"
 	"google.golang.org/grpc"
-	pyroscope "github.com/pyroscope-io/pyroscope/pkg/agent/profiler"
 )
 
 const (
@@ -84,8 +84,8 @@ type frontendServer struct {
 func main() {
 
 	pyroscope.Start(pyroscope.Config{
-		ApplicationName: os.Getenv("APPLICATION_NAME"),
-		ServerAddress:   os.Getenv("SERVER_ADDRESS"),
+		ApplicationName: os.Getenv("PYROSCOPE_APPLICATION_NAME"),
+		ServerAddress:   os.Getenv("PYROSCOPE_SERVER_ADDRESS"),
 	})
 
 	ctx := context.Background()

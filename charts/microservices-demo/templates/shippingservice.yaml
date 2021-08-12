@@ -28,7 +28,7 @@ spec:
       serviceAccountName: default
       containers:
       - name: server
-        image: "{{ .Values.shippingservice.image.repository }}/shippingservice:{{ .Values.shippingservice.image.tag }}"
+        image: "{{ .Values.shippingService.image.registry | default .Values.images.registry }}/shippingservice:{{ .Values.shippingService.image.tag | default .Values.images.tag }}"
         ports:
         - containerPort: 50051
         env:
@@ -43,9 +43,9 @@ spec:
         - name: JAEGER_SERVICE_ADDR
           value: "jaeger-collector:14268"
         - name: PYROSCOPE_APPLICATION_NAME
-          value: "shipping.service"
+          value: "{{ .Values.shippingService.pyroscope.appName }}"
         - name: PYROSCOPE_SERVER_ADDRESS
-          value: "{{ .Values.pyroscopeServer.url }}"
+          value: "{{ .Values.pyroscopeServer.address }}"
         readinessProbe:
           periodSeconds: 5
           exec:

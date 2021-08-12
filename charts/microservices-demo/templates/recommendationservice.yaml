@@ -29,7 +29,7 @@ spec:
       terminationGracePeriodSeconds: 5
       containers:
       - name: server
-        image: "{{ .Values.recommendationservice.image.repository }}/recommendationservice:{{ .Values.recommendationservice.image.tag }}"
+        image: "{{ .Values.recommendationService.image.registry | default .Values.images.registry }}/recommendationservice:{{ .Values.recommendationService.image.tag | default .Values.images.tag }}"
         ports:
         - containerPort: 8080
         readinessProbe:
@@ -54,9 +54,9 @@ spec:
         - name: DISABLE_DEBUGGER
           value: "1"
         - name: PYROSCOPE_APPLICATION_NAME
-          value: "recommendation.service"
+          value: "{{ .Values.recommendationService.pyroscope.appName }}"
         - name: PYROSCOPE_SERVER_ADDRESS
-          value: "{{ .Values.pyroscopeServer.url }}"
+          value: "{{ .Values.pyroscopeServer.address }}"
         securityContext:
           capabilities:
             add:

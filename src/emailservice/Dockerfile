@@ -12,7 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-ARG PYROSCOPE_VERSION=latest
+ARG pyroscope_image
+FROM ${pyroscope_image} as pyroscope
 
 FROM python:3.7-slim as base
 
@@ -51,7 +52,7 @@ COPY --from=builder /usr/local/lib/python3.7/ /usr/local/lib/python3.7/
 COPY . .
 
 # this copies pyroscope binary from pyroscope image to your image:
-COPY --from=pyroscope/pyroscope:${PYROSCOPE_VERSION} /usr/bin/pyroscope /usr/bin/pyroscope
+COPY --from=pyroscope /usr/bin/pyroscope /usr/bin/pyroscope
 
 EXPOSE 8080
 CMD [ "pyroscope", "exec", "python", "email_server.py" ]

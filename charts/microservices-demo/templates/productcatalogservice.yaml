@@ -15,46 +15,44 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: emailservice
+  name: productcatalogservice
 spec:
   selector:
     matchLabels:
-      app: emailservice
+      app: productcatalogservice
   template:
     metadata:
       labels:
-        app: emailservice
+        app: productcatalogservice
     spec:
       serviceAccountName: default
       terminationGracePeriodSeconds: 5
       containers:
       - name: server
-        image: "{{ .Values.emailservice.image.repository }}/emailservice:{{ .Values.emailservice.image.tag }}"
+        image: "{{ .Values.productCatalogService.image.registry | default .Values.images.registry }}/productcatalogservice:{{ .Values.productCatalogService.image.tag | default .Values.images.tag }}"
         ports:
-        - containerPort: 8080
+        - containerPort: 3550
         env:
         - name: PORT
-          value: "8080"
+          value: "3550"
+        - name: DISABLE_STATS
+          value: "1"
         - name: DISABLE_TRACING
           value: "1"
         - name: DISABLE_PROFILER
           value: "1"
+        - name: JAEGER_SERVICE_ADDR
+          value: "jaeger-collector:14268"
         - name: PYROSCOPE_APPLICATION_NAME
-          value: "email.service"
+          value: "{{ .Values.productCatalogService.pyroscope.appName }}"
         - name: PYROSCOPE_SERVER_ADDRESS
-          value: "{{ .Values.pyroscopeServer.url }}"
+          value: "{{ .Values.pyroscopeServer.address }}"
         readinessProbe:
-          periodSeconds: 5
           exec:
-            command: ["/bin/grpc_health_probe", "-addr=:8080"]
+            command: ["/bin/grpc_health_probe", "-addr=:3550"]
         livenessProbe:
-          periodSeconds: 5
           exec:
-            command: ["/bin/grpc_health_probe", "-addr=:8080"]
-        securityContext:
-          capabilities: 
-            add:
-            - SYS_PTRACE  
+            command: ["/bin/grpc_health_probe", "-addr=:3550"]
         resources:
           requests:
             cpu: 100m
@@ -68,12 +66,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: emailservice
+  name: productcatalogservice
 spec:
   type: ClusterIP
   selector:
-    app: emailservice
+    app: productcatalogservice
   ports:
   - name: grpc
-    port: 5000
-    targetPort: 8080
+    port: 3550
+    targetPort: 3550

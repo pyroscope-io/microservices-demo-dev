@@ -29,18 +29,16 @@ spec:
       terminationGracePeriodSeconds: 5
       containers:
       - name: server
-        image: "{{ .Values.cartservice.image.repository }}/cartservice:{{ .Values.cartservice.image.tag }}"
+        image: "{{ .Values.cartService.image.registry | default .Values.images.registry }}/cartservice:{{ .Values.cartService.image.tag | default .Values.images.tag }}"
         ports:
         - containerPort: 7070
         env:
         - name: REDIS_ADDR
           value: "redis-cart:6379"
         - name: PYROSCOPE_APPLICATION_NAME
-          value: "cart.service"
+          value: "{{ .Values.cartService.pyroscope.appName }}"
         - name: PYROSCOPE_SERVER_ADDRESS
-          value: "{{ .Values.pyroscopeServer.url }}"
-        - name: PYROSCOPE_LOG_LEVEL
-          value: "debug"
+          value: "{{ .Values.pyroscopeServer.address }}"
         securityContext:
           capabilities:
             add:

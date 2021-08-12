@@ -28,7 +28,7 @@ spec:
       serviceAccountName: default
       containers:
         - name: server
-          image: "{{ .Values.checkoutservice.image.repository }}/checkoutservice:{{ .Values.checkoutservice.image.tag }}"
+          image: "{{ .Values.checkoutService.image.registry | default .Values.images.registry }}/checkoutservice:{{ .Values.checkoutService.image.tag | default .Values.images.tag }}"
           ports:
           - containerPort: 5050
           readinessProbe:
@@ -61,9 +61,9 @@ spec:
           - name: JAEGER_SERVICE_ADDR
             value: "jaeger-collector:14268"
           - name: PYROSCOPE_APPLICATION_NAME
-            value: "checkout.service"
+            value: "{{ .Values.checkoutService.pyroscope.appName }}"
           - name: PYROSCOPE_SERVER_ADDRESS
-            value: "{{ .Values.pyroscopeServer.url }}"
+            value: "{{ .Values.pyroscopeServer.address }}"
           resources:
             requests:
               cpu: 100m

@@ -31,11 +31,11 @@ import (
 	pb "github.com/GoogleCloudPlatform/microservices-demo/src/productcatalogservice/genproto"
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 
-	pyroscope "github.com/pyroscope-io/pyroscope/pkg/agent/profiler"
 	"cloud.google.com/go/profiler"
 	"contrib.go.opencensus.io/exporter/jaeger"
 	"contrib.go.opencensus.io/exporter/stackdriver"
 	"github.com/golang/protobuf/jsonpb"
+	pyroscope "github.com/pyroscope-io/pyroscope/pkg/agent/profiler"
 	"github.com/sirupsen/logrus"
 	//  "go.opencensus.io/exporter/jaeger"
 	"go.opencensus.io/plugin/ocgrpc"
@@ -78,8 +78,8 @@ func init() {
 func main() {
 
 	pyroscope.Start(pyroscope.Config{
-		ApplicationName: os.Getenv("APPLICATION_NAME"),
-		ServerAddress:   os.Getenv("SERVER_ADDRESS"),
+		ApplicationName: os.Getenv("PYROSCOPE_APPLICATION_NAME"),
+		ServerAddress:   os.Getenv("PYROSCOPE_SERVER_ADDRESS"),
 	})
 
 	if os.Getenv("DISABLE_TRACING") == "" {

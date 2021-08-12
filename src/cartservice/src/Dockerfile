@@ -12,7 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-ARG PYROSCOPE_VERSION=latest
+ARG pyroscope_image
+FROM ${pyroscope_image} as pyroscope
 
 # https://mcr.microsoft.com/v2/dotnet/sdk/tags/list
 FROM mcr.microsoft.com/dotnet/sdk:5.0.201 as builder
@@ -34,6 +35,6 @@ WORKDIR /app
 COPY --from=builder /cartservice .
 ENV ASPNETCORE_URLS http://*:7070
 
-COPY --from=pyroscope/pyroscope:${PYROSCOPE_VERSION} /usr/bin/pyroscope /usr/bin/pyroscope
+COPY --from=pyroscope /usr/bin/pyroscope /usr/bin/pyroscope
 
 ENTRYPOINT ["pyroscope", "exec", "-spy-name", "dotnetspy", "/app/cartservice"]

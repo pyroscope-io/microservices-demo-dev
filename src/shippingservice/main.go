@@ -33,8 +33,8 @@ import (
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/status"
 
-	pyroscope "github.com/pyroscope-io/pyroscope/pkg/agent/profiler"
 	pb "github.com/GoogleCloudPlatform/microservices-demo/src/shippingservice/genproto"
+	pyroscope "github.com/pyroscope-io/pyroscope/pkg/agent/profiler"
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 )
 
@@ -61,8 +61,8 @@ func init() {
 func main() {
 
 	pyroscope.Start(pyroscope.Config{
-		ApplicationName: os.Getenv("APPLICATION_NAME"),
-		ServerAddress:   os.Getenv("SERVER_ADDRESS"),
+		ApplicationName: os.Getenv("PYROSCOPE_APPLICATION_NAME"),
+		ServerAddress:   os.Getenv("PYROSCOPE_SERVER_ADDRESS"),
 	})
 
 	if os.Getenv("DISABLE_TRACING") == "" {

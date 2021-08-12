@@ -30,7 +30,7 @@ spec:
       serviceAccountName: default
       containers:
         - name: server
-          image: "{{ .Values.frontend.image.repository }}/frontend:{{ .Values.frontend.image.tag }}"
+          image: "{{ .Values.frontend.image.registry | default .Values.images.registry }}/frontend:{{ .Values.frontend.image.tag | default .Values.images.tag }}"
           ports:
           - containerPort: 8080
           readinessProbe:
@@ -77,9 +77,9 @@ spec:
           - name: JAEGER_SERVICE_ADDR
             value: "jaeger-collector:14268"
           - name: PYROSCOPE_APPLICATION_NAME
-            value: "frontend"
+            value: "{{ .Values.frontend.pyroscope.appName }}"
           - name: PYROSCOPE_SERVER_ADDRESS
-            value: "{{ .Values.pyroscopeServer.url }}"
+            value: "{{ .Values.pyroscopeServer.address }}"
           resources:
             requests:
               cpu: 100m
