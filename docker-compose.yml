@@ -40,11 +40,11 @@ services:
       <<: *default_build
       context: "${SRC_DIR}/frontend"
 
-  loadgenerator:
-    image: "${REGISTRY}/loadgenerator:${TAG}"
-    build:
-      <<: *default_build
-      context: "${SRC_DIR}/loadgenerator"
+#  loadgenerator:
+#    image: "${REGISTRY}/loadgenerator:${TAG}"
+#    build:
+#      <<: *default_build
+#      context: "${SRC_DIR}/loadgenerator"
 
 #  paymentservice:
 #    image: "${REGISTRY}/paymentservice:${TAG}"

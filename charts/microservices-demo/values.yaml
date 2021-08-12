@@ -1,6 +1,6 @@
 images:
-  registry: pyroscope
-  tag: 0.0.1
+  registry: public.ecr.aws/pyroscope
+  tag: 0.0.37
 
 pyroscopeServer:
   address: http://pyroscope:4040

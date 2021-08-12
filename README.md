@@ -82,13 +82,12 @@ ENTRYPOINT ["pyroscope", "exec", "-spy-name", "dotnetspy", "/app/cartservice"]
 Docker images need to be build and pushed to repositories before deployment.
 
 ```
-export REGISTRY=my-registry
 make all
 ```
 
 Supported variables:
 
-- `REGISTRY` specifies registry for images built. **Required**.
+- `REGISTRY` specifies registry for images built.
 - `TAG` specifies tag to use (defaults to `0.1.0`).
 - `PYROSCOPE_VERSION` overrides default version (`0.0.37`) of pyroscope image.
 - `PYROSCOPE_IMAGE` overrides pyroscope image used.
