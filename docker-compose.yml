@@ -1,0 +1,71 @@
+version: '3'
+
+services:
+
+#  adservice:
+#  image: "${REGISTRY}/adservice:${TAG}"
+#  build: &default_build
+#    context: "${SRC_DIR}/adservice/src"
+#    args:
+#      pyroscope_image: "${PYROSCOPE_IMAGE}"
+
+  cartservice:
+    image: "${REGISTRY}/cartservice:${TAG}"
+    build: &default_build
+      context: "${SRC_DIR}/cartservice/src"
+      args:
+        pyroscope_image: "${PYROSCOPE_IMAGE}"
+
+  checkoutservice:
+    image: "${REGISTRY}/checkoutservice:${TAG}"
+    build:
+      <<: *default_build
+      context: "${SRC_DIR}/checkoutservice"
+
+#  currencyservice:
+#    image: "${REGISTRY}/currencyservice:${TAG}"
+#    build:
+#      context: "${SRC_DIR}/currencyservice"
+#      <<: *default_build
+
+  emailservice:
+    image: "${REGISTRY}/emailservice:${TAG}"
+    build:
+      <<: *default_build
+      context: "${SRC_DIR}/emailservice"
+
+  frontend:
+    image: "${REGISTRY}/frontend:${TAG}"
+    build:
+      <<: *default_build
+      context: "${SRC_DIR}/frontend"
+
+  loadgenerator:
+    image: "${REGISTRY}/loadgenerator:${TAG}"
+    build:
+      <<: *default_build
+      context: "${SRC_DIR}/loadgenerator"
+
+#  paymentservice:
+#    image: "${REGISTRY}/paymentservice:${TAG}"
+#    build:
+#      <<: *default_build
+#      context: "${SRC_DIR}/paymentservice"
+
+  productcatalogservice:
+    image: "${REGISTRY}/productcatalogservice:${TAG}"
+    build:
+      <<: *default_build
+      context: "${SRC_DIR}/productcatalogservice"
+
+  recommendationservice:
+    image: "${REGISTRY}/recommendationservice:${TAG}"
+    build:
+      <<: *default_build
+      context: "${SRC_DIR}/recommendationservice"
+
+  shippingservice:
+    image: "${REGISTRY}/shippingservice:${TAG}"
+    build:
+      <<: *default_build
+      context: "${SRC_DIR}/shippingservice"
